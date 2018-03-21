@@ -4,10 +4,10 @@ output DUMMYPROCESS
 
 ######## DELIMITER (!!! NEED THIS LINE !!!) ##################
 
-set run_mode 1
-set cluster_type lsf
-set cluster_queue 8nm
-set cluster_status_update 30 15
+#set run_mode 1
+#set cluster_type lsf
+#set cluster_queue 8nm
+#set cluster_status_update 30 15
 set lhapdf /afs/cern.ch/work/s/selvaggi/public/LHAPDF-6.1.6/build/bin/lhapdf-config
 
 launch DUMMYPROCESS

@@ -40,8 +40,6 @@ def main():
        os.makedirs(jobsdir)
        os.makedirs(jobsdir+'/std/')
        os.makedirs(jobsdir+'/cfg/')
-    else:
-       sys.exit('Output dir: "'+jobsdir+'" exists.')
 
     print '[Submitting jobs]'
     jobCount=0
@@ -52,10 +50,13 @@ def main():
 
        print 'Submitting job '+str(job)+' out of '+str(args.njobs)
        basename =  args.procname+ '_'+seed
+
+       cwd = os.getcwd()
+       script = cwd + '/bin/submitMG.sh '
        
        cmd = 'bsub -o '+jobsdir+'/std/'+basename +'.out -e '+jobsdir+'/std/'+basename +'.err -q '+args.queue
        cmd += ' -R "rusage[mem={}:pool={}]"'.format(args.memory,args.disk)
-       cmd +=' -J '+basename+' "bin/submitMG.sh '+mg5card+' '+args.procname+' '+outdir+' '+seed+' '+str(args.nev)+' '+cuts+' '+model+'"'
+       cmd +=' -J '+basename+' "'+script+mg5card+' '+args.procname+' '+outdir+' '+seed+' '+str(args.nev)+' '+cuts+' '+model+'"'
        
        print cmd
        
@@ -67,7 +68,8 @@ def main():
            output = processCmd(cmd)
            if ('error' not in output):
                print 'Submitted after retry - job '+str(jobCount+1)
-
+       
+       
        jobCount += 1
 
 #_______________________________________________________________________________________
