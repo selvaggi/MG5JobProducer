@@ -15,14 +15,16 @@ SEED=${4}
 NEVENTS=${5}
 CUTFILE=${6}
 MODELFILE=${7}
+SPLITPOL=${8}
 
-mkdir job
+
+mkdir -p job
 cd job
 
 cp -r /eos/experiment/fcc/hh/utils/generators/MG5_aMC_v2.6.1.tar.gz .
 tar -xzvf MG5_aMC_v2.6.1.tar.gz
-cd MG5_aMC_v2_6_1
 
+cd MG5_aMC_v2_6_1
 # parse script file
 cp ${SCRIPTFILE} .
 SCRIPT=$(basename $SCRIPTFILE)
@@ -65,10 +67,57 @@ fi;
 echo "Launching process..."
 ./bin/mg5_aMC config01
 
-# copy output where specified
 OUTDIR=${OUTPUTDIR}/${PROCESSNAME}
 OUTFILE=${OUTDIR}/events_${SEED}.lhe.gz
 
-echo "Copying LHE file to ${OUTFILE}"
-mkdir -p ${OUTDIR}
-cp -r DUMMYPROCESS/Events/run_01/unweighted_events.lhe.gz ${OUTDIR}/events_${SEED}.lhe.gz
+MGLHE=DUMMYPROCESS/Events/run_01/unweighted_events.lhe.gz
+
+if [ "$SPLITPOL" = false ] ; then
+
+   echo "Copying LHE file to ${OUTFILE}"
+   mkdir -p ${OUTDIR}
+   cp -r ${MGLHE} ${OUTDIR}/events_${SEED}.lhe.gz
+
+else
+
+   # now run polarisation splitting
+
+   # download old MG5 version and compile decay code
+   cp -r /eos/experiment/fcc/hh/utils/generators/MadGraph5_v1.5.14.tar.gz .
+   tar -xzvf MadGraph5_v1.5.14.tar.gz
+   
+   cd MadGraph5_v1_5_14/DECAY
+   cp /eos/experiment/fcc/hh/utils/generators/MG5patches/Polarisation/* .
+
+   make
+
+   # decay W and Z keeping the polarisation information
+   python decay_lhe.py ../../DUMMYPROCESS/Events/run_01/
+   cd ../../DUMMYPROCESS/Events/run_01
+
+   # now split the file into 3 components (need ROOT)
+   source /cvmfs/sft.cern.ch/lcg/releases/LCG_88/gcc/4.9.1/x86_64-slc6/setup.sh
+   source /cvmfs/sft.cern.ch/lcg/releases/LCG_88/Python/2.7.13/x86_64-slc6-gcc49-opt/Python-env.sh
+   source /cvmfs/sft.cern.ch/lcg/releases/LCG_88/ROOT/6.08.06/x86_64-slc6-gcc49-opt/ROOT-env.sh
+
+   cp /eos/experiment/fcc/hh/utils/generators/MG5patches/Polarisation/* .
+   
+   echo "Splitting the LHE file in 3 polarisations .. "
+   
+   python lhe_strip_polarisations.py
+
+   echo "Copying LHE file to ${OUTDIR}_LL, ${OUTDIR}_TL ${OUTDIR}_TT"
+
+   mkdir -p ${OUTDIR}_LL
+   mkdir -p ${OUTDIR}_TT
+   mkdir -p ${OUTDIR}_TL
+
+   gzip unweighted_events_decayed_LL.lhe
+   gzip unweighted_events_decayed_TT.lhe
+   gzip unweighted_events_decayed_TL.lhe
+
+   python /afs/cern.ch/work/h/helsens/public/FCCutils/eoscopy.py unweighted_events_decayed_LL.lhe.gz ${OUTDIR}_LL/events_${SEED}.lhe.gz
+   python /afs/cern.ch/work/h/helsens/public/FCCutils/eoscopy.py unweighted_events_decayed_TL.lhe.gz ${OUTDIR}_TL/events_${SEED}.lhe.gz
+   python /afs/cern.ch/work/h/helsens/public/FCCutils/eoscopy.py unweighted_events_decayed_TT.lhe.gz ${OUTDIR}_TT/events_${SEED}.lhe.gz
+
+fi
