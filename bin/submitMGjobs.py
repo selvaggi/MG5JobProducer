@@ -18,7 +18,7 @@ def processCmd(cmd, quite = 0):
 #__________________________________________________________
 def getuid2(user):
     
-    seed = '%i%i%i%i%i%i%i%i%i'%(random.randint(0,1),
+    seed = '%i%i%i%i%i%i%i%i%i'%(random.randint(1,9),
                                  random.randint(0,9),
                                  random.randint(0,9),
                                  random.randint(0,9),
@@ -92,7 +92,7 @@ def main():
                print 'Submitted after retry - job '+str(jobCount+1)
        
        jobCount += 1
-
+       
 #_______________________________________________________________________________________
 if __name__ == "__main__":
     main()
