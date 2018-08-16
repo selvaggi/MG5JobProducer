@@ -21,3 +21,5 @@ set lhaid 260000
 set use_syst False 
 set mmjj 100.
 
+set ptj 25.
+set etaj 6.5

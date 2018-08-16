@@ -10,7 +10,7 @@ set lhapdf /afs/cern.ch/work/s/selvaggi/public/LHAPDF-6.1.6/build/bin/lhapdf-con
 
 launch DUMMYPROCESS
 
-set kw 0.95
+set kw 1.05
 
 set iseed DUMMYSEED
 set nevents DUMMYNEVENTS
