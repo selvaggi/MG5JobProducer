@@ -92,7 +92,6 @@ def main():
                print 'Submitted after retry - job '+str(jobCount+1)
        
        jobCount += 1
-       
 #_______________________________________________________________________________________
 if __name__ == "__main__":
     main()

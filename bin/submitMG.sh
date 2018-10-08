@@ -23,8 +23,13 @@ cd job
 
 cp -r /eos/experiment/fcc/hh/utils/generators/MG5_aMC_v2.6.1.tar.gz .
 tar -xzvf MG5_aMC_v2.6.1.tar.gz
-
 cd MG5_aMC_v2_6_1
+
+#cp -r /eos/experiment/fcc/hh/utils/generators/mg5amcnlo_dev.tgz .
+#tar -xzvf mg5amcnlo_dev.tgz
+#cd mg5amcnlo
+
+
 # parse script file
 cp ${SCRIPTFILE} .
 SCRIPT=$(basename $SCRIPTFILE)
