@@ -1,0 +1,28 @@
+set auto_update 0
+
+define v = ve vm vt ve~ vm~ vt~
+define q = u c d s u~ c~ d~ s~
+
+generate q q > h h j j
+output DUMMYPROCESS
+
+######## DELIMITER (!!! NEED THIS LINE !!!) ##################
+
+set lhapdf /afs/cern.ch/work/s/selvaggi/public/LHAPDF-6.1.6/build/bin/lhapdf-config
+
+launch DUMMYPROCESS
+
+set iseed DUMMYSEED
+set nevents DUMMYNEVENTS
+
+set ebeam1 7000
+set ebeam2 7000
+
+set pdlabel lhapdf
+set lhaid 260000
+
+set use_syst False 
+set mmjj 500.
+
+set ptj 10.
+set etaj 5.5
